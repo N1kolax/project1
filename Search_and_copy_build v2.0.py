@@ -4,6 +4,7 @@ import os
 import shutil
 from Tkinter import *
 import tkFileDialog as filedialog
+import tkMessageBox as mb
 
 class Block:
     def __init__(self, master):
@@ -15,13 +16,18 @@ class Block:
         self.t.pack()
 
 
-    def setFunc_B(self, func):
-        self.b['command'] = eval('self.' + func)
-        self.e['command'] = eval('self.' + func)
+    def setFunc(self, func_B, func_E):
+        self.b['command'] = eval('self.' + func_B)
+        self.e['command'] = eval('self.' + func_E)
+
+    def modal(self):
+        answer = mb.askyesno(title="Папка выбрана правильно?", message="Копировать билд из директории?")
+        if answer == True:
+            self.copy()
 
     def builddirchoose(self):
-        self.builddir = filedialog.askdirectory()
-        self.t.insert(END, 'Choosen build directory ' + self.builddir + '\n')
+        self.builddir = filedialog.askdirectory(initialdir = "E:/Downloads/111")
+        self.t.insert(END, 'Choosen build directory: ' + self.builddir + '\n')
 
     def copy(self):
         builddir = self.builddir.replace("\\", "/")
@@ -45,9 +51,9 @@ class Block:
             self.t.insert(END, 'Build and exe are copyed!' + '\n')
 
 root = Tk()
+root.title("Builder Copy")
 
 first_block = Block(root)
-first_block.setFunc_B('copy')
-first_block.setFunc_E('builddirchoose')
+first_block.setFunc('modal', 'builddirchoose')
 
 root.mainloop()
