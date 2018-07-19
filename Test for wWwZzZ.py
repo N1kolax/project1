@@ -69,13 +69,15 @@ class Block:
 
     def share_to_U(self):
         newname = self.builddir.split('\\')[4]
-        newnamedir = os.path.join('newpath', newname)
-        if not os.path.exists(newnamedir):
-            os.makedirs(newnamedir)
+        newname = newname.split('_Dark')[0]
+        newnamedir = os.path.join('D:\\buildsPKG', newname)
         path = self.dst
         self.scan_for_new_build(path)
         src = self.builddir
-        dst = newnamedir
+        newlastdir = self.builddir.split('\\')[3]
+        dst = os.path.join(newnamedir, newlastdir)
+        if not os.path.exists(dst):
+            os.makedirs(dst)
         self.copy_function(src, dst)
         self.t.insert(END, 'Build shared to U!' + '\n')
 
