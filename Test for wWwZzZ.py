@@ -16,16 +16,16 @@ class Block:
         self.sflbxbox = Button(master, text="Search for a last XBOX build")
         self.ctl = Button(master, text="Copy build to local")
         self.stu = Button(master, text="Share build to U")
-        self.t = Text(master, width=50, height=30, bg="white", fg='black', wrap=WORD)
+        self.t = Text(master, bg="white", fg='black', wrap=WORD)
         self.progressVar = IntVar()
-        self.pb = ttk.Progressbar(length=200, variable=self.progressVar, maximum=100)
-        self.chm.pack()
-        self.sflbps4.pack()
-        self.sflbxbox.pack()
-        self.ctl.pack()
-        self.stu.pack()
-        self.pb.pack()
-        self.t.pack()
+        self.pb = ttk.Progressbar(length=250, variable=self.progressVar, maximum=100)
+        self.sflbps4.grid(row=0, column=1)
+        self.chm.grid(row=0, column=2, pady=10)
+        self.sflbxbox.grid(row=0, column=3)
+        self.ctl.grid(row=1, column=1)
+        self.pb.grid(row=1, column=2, pady=10)
+        self.stu.grid(row=1, column=3)
+        self.t.grid(row=2, rowspan=4, column=1, columnspan=3)
 
     def setFunc(self, func_chm, func_sflbps4, func_sflbxbox, func_ctl, func_stu):
         self.chm['command'] = eval('self.' + func_chm)
@@ -52,7 +52,7 @@ class Block:
             date_list = [[x, os.path.getmtime(x)] for x in build_list]
             sort_date_list = sorted(date_list, key=lambda x: x[1], reverse=True)
             self.builddir = (sort_date_list[0][0])
-            self.t.insert(END, 'Last build: ' + self.builddir + '\n')
+            self.t.insert(END, 'Choosen build directory: ' + self.builddir + '\n')
 
     def modal(self):
         answer = mb.askyesno(title="Is the folder selected correctly?", message="Copy build to local disk?")
