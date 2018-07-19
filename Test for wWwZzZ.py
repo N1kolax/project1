@@ -8,6 +8,7 @@ import tkMessageBox as mb
 import ttk
 import time
 
+
 class Block:
     def __init__(self, master):
         self.chm = Button(master, text="Сhoose build manual")
@@ -34,7 +35,7 @@ class Block:
         self.stu['command'] = eval('self.' + func_stu)
 
     def builddirchoose(self):
-        self.builddir = filedialog.askdirectory(initialdir = "E:/Downloads/111")
+        self.builddir = filedialog.askdirectory(initialdir="E:/Downloads/111")
         self.t.insert(END, 'Choosen build directory: ' + self.builddir + '\n')
 
     def search_for_last_ps4(self):
@@ -67,23 +68,21 @@ class Block:
         self.dst = dst
 
     def share_to_U(self):
+        newname = self.builddir.split('\\')[4]
+        newnamedir = os.path.join('newpath', newname)
+        if not os.path.exists(newnamedir):
+            os.makedirs(newnamedir)
         path = self.dst
         self.scan_for_new_build(path)
         src = self.builddir
-        
-        dst = self.builddir.split('\\')[5]
-
-        dst = os.path.join(r'E:\builds', dst)
+        dst = newnamedir
         self.copy_function(src, dst)
-        self.t.insert(END, 'Build copyed! Time to wrap up this shit!' + '\n')
-
-
         self.t.insert(END, 'Build shared to U!' + '\n')
 
     def copy_function(self, src, dst):
         countFiles = 0
         for path, dirs, filenames in os.walk(src):
-           countFiles  = countFiles + len(filenames)
+            countFiles = countFiles + len(filenames)
         self.pb['maximum'] = countFiles
         self.progressVar.set(0)
         for path, dirs, filenames in os.walk(src):
@@ -103,40 +102,6 @@ class Block:
     def incPB(self):
         self.progressVar.set(self.progressVar.get() + 1)
         self.pb.update()
-
-    def copy_to_U(self):
-        dir_end = self.dst.replace('E:/builds\\', '')
-        newdir = os.path.join(r'D:/buildsPKG/', dir_end)
-        newdir = newdir.split('_Dark')[0]
-        os.makedirs(newdir)
-        path = self.dst
-        devbuild = [os.path.join(path, x) for x in os.listdir(path)]
-        if devbuild:
-            date_list = [[x, os.path.getmtime(x)] for x in devbuild]
-            sort_date_list = sorted(date_list, key=lambda x: x[1], reverse=True)
-            self.scr = (sort_date_list[0][0])
-        countFiles = 0
-        src = self.scr
-        dst = newdir
-        for path, dirs, filenames in os.walk(src):
-            countFiles = countFiles + len(filenames)
-        self.pb['maximum'] = countFiles
-        self.progressVar.set(0)
-        for path, dirs, filenames in os.walk(src):
-            for directory in dirs:
-                srcPath = os.path.join(path, directory)
-                dstPath = srcPath.replace(src, dst)
-                if not os.path.exists(dstPath):
-                    os.makedirs(dstPath)
-            for fileName in filenames:
-                srcPath = os.path.join(path, fileName)
-                dstPath = srcPath.replace(src, dst)
-                if not os.path.exists(dstPath):
-                    self.t.insert(END, 'Copyng ' + fileName + '\n')
-                    shutil.copy(srcPath, dstPath)
-                self.incPB()
-        self.t.insert(END, 'Build shared to U!' + '\n')
-
 
 root = Tk()
 root.title("Builder Copy")
