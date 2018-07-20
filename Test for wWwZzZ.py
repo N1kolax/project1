@@ -79,12 +79,12 @@ class Block:
         src = self.builddir
         newlastdir = self.builddir.split('\\')[3]
         dst = os.path.join(newnamedir, newlastdir)
-        if not os.path.exists(dst):
-            os.makedirs(dst)
         self.copy_function(src, dst)
         self.t.insert(END, 'Build shared to U!' + '\n')
 
     def copy_function(self, src, dst):
+        if not os.path.exists(dst):
+            os.makedirs(dst)
         countFiles = 0
         for path, dirs, filenames in os.walk(src):
             countFiles = countFiles + len(filenames)
@@ -110,7 +110,7 @@ class Block:
 
     def bot_send_message(self):
         apihelper.proxy = {'https': 'socks5://192.3.190.70:1080'}
-        bot = telebot.TeleBot('643810721:AAHdHFBRmiRY6wTEnW1OZe6aC1-tBE1bnOI')
+        bot = telebot.TeleBot()
         bot.send_message(chat_id=335872472, text="I'm sorry Dave I'm afraid I can't do that.")
 
 
