@@ -6,8 +6,8 @@ from Tkinter import *
 import tkFileDialog as filedialog
 import tkMessageBox as mb
 import ttk
-import telebot
-from telebot import apihelper
+import telepot
+
 
 class Block:
     def __init__(self, master):
@@ -44,10 +44,12 @@ class Block:
     def search_for_last_ps4(self):
         path = r'E:\Downloads\builds_ps4_and_xbox\PS4'
         self.scan_for_new_build(path)
+        self.t.insert(END, 'Choosen build directory: ' + self.builddir + '\n')
 
     def search_for_last_xbox(self):
         path = r'E:\Downloads\builds_ps4_and_xbox\XBOX'
         self.scan_for_new_build(path)
+        self.t.insert(END, 'Choosen build directory: ' + self.builddir + '\n')
 
     def scan_for_new_build(self, path):
         build_list = [os.path.join(path, x) for x in os.listdir(path)]
@@ -55,7 +57,7 @@ class Block:
             date_list = [[x, os.path.getmtime(x)] for x in build_list]
             sort_date_list = sorted(date_list, key=lambda x: x[1], reverse=True)
             self.builddir = (sort_date_list[0][0])
-            self.t.insert(END, 'Choosen build directory: ' + self.builddir + '\n')
+
 
     def modal(self):
         answer = mb.askyesno(title="Is the folder selected correctly?", message="Copy build to local disk?")
@@ -73,14 +75,20 @@ class Block:
     def share_to_U(self):
         newname = self.builddir.split('\\')[4]
         newname = newname.split('_Dark')[0]
-        newnamedir = os.path.join('D:\\buildsPKG', newname)
+        if "PS4" in newname:
+            self.newnamedir = os.path.join('D:\\buildsPKG', newname)
+            a = 0
+        else:
+            self.newnamedir = os.path.join('D:\\buildsXBOX', newname)
+            a = 1
         path = self.dst
         self.scan_for_new_build(path)
         src = self.builddir
         newlastdir = self.builddir.split('\\')[3]
-        dst = os.path.join(newnamedir, newlastdir)
+        dst = os.path.join(self.newnamedir, newlastdir)
         self.copy_function(src, dst)
         self.t.insert(END, 'Build shared to U!' + '\n')
+        self.bot_send_message(a)
 
     def copy_function(self, src, dst):
         if not os.path.exists(dst):
@@ -108,12 +116,19 @@ class Block:
         self.progressVar.set(self.progressVar.get() + 1)
         self.pb.update()
 
-    def bot_send_message(self):
-        apihelper.proxy = {'https': 'socks5://192.3.190.70:1080'}
-        bot = telebot.TeleBot()
-        bot.send_message(chat_id=335872472, text="I'm sorry Dave I'm afraid I can't do that.")
-
-
+    def bot_send_message(self, a):
+        telepot.api.set_proxy("http://149.56.109.24:3128")
+        bot = telepot.Bot('token here')
+        if a == 0:
+            if '2' in self.newnamedir:
+                bot.sendMessage(335872472, '#STG_orbis_package #retail ' + self.newnamedir)
+            else:
+                bot.sendMessage(335872472, '#STG_orbis_package #release ' + self.newnamedir)
+        else:
+            if '2' in self.newnamedir:
+                bot.sendMessage(335872472, '#STG_durango_package #retail ' + self.newnamedir)
+            else:
+                bot.sendMessage(335872472, '#STG_durango_package #release ' + self.newnamedir)
 
 root = Tk()
 root.title("Builder Copy")
